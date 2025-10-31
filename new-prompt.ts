@@ -98,7 +98,8 @@ const filename =
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-') + '.mdx'
 
-const filepath = path.join(__dirname, 'prompts', category, filename)
+// Create in drafts folder by default
+const filepath = path.join(__dirname, 'prompts', 'drafts', filename)
 
 // Check if file exists
 if (fs.existsSync(filepath)) {
@@ -110,6 +111,8 @@ if (fs.existsSync(filepath)) {
 const blankTemplate = `---
 title: "${title}"
 description: ""
+category: "${category}"
+status: "draft"
 tags: []
 ---
 
@@ -121,6 +124,8 @@ const templates: Record<Category, string> = {
   simple: `---
 title: "${title}"
 description: "Describe when and how you use this prompt"
+category: "${category}"
+status: "draft"
 tags: ["tag1", "tag2"]
 ---
 
@@ -131,6 +136,8 @@ Your prompt content here...
   complex: `---
 title: "${title}"
 description: "Describe this GPT/Gem and what it helps you accomplish"
+category: "${category}"
+status: "draft"
 tags: ["tag1", "tag2"]
 ---
 
@@ -153,6 +160,8 @@ You are [role description].
   rules: `---
 title: "${title}"
 description: "Describe what project type or tool this is for"
+category: "${category}"
+status: "draft"
 tags: ["tag1", "tag2"]
 ---
 
@@ -178,11 +187,15 @@ const content = useBlank ? blankTemplate : templates[category]
 // Create the file
 fs.writeFileSync(filepath, content, 'utf8')
 
-console.log(`\n✅ Created: ${filepath}`)
+console.log(`\n✅ Created draft: ${filepath}`)
 if (useBlank) {
   console.log('   (blank template)')
+} else {
+  console.log(`   (${category} template)`)
 }
 console.log(`\nNext steps:`)
 console.log(`1. Edit the file and add your prompt content`)
 console.log(`2. Update tags and description`)
-console.log(`3. Restart dev server to see it in the UI\n`)
+console.log(`3. When ready, change status to "ready" in frontmatter`)
+console.log(`4. Run 'pnpm publish:prompts' to publish all ready drafts`)
+console.log(`5. Restart dev server to see published prompts in the UI\n`)

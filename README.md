@@ -13,30 +13,30 @@ Visit `http://localhost:5173`
 
 ## Adding Prompts
 
-### Interactive Mode (Recommended)
+All new prompts start as drafts in `prompts/drafts/` (git-ignored).
+
+### Create Draft
 
 ```bash
 pnpm new
 ```
 
-Interactive prompts guide you through category, title, and template selection.
+Creates draft with `status: "draft"` in frontmatter.
 
-### CLI Mode
+### Publish Draft
 
-```bash
-# With template
-pnpm new --category=simple --title="Your Prompt Title"
+1. Edit your prompt in `prompts/drafts/`
+2. Change `status: "ready"` in frontmatter
+3. Run `pnpm publish:prompts`
+4. Restart dev server
 
-# Blank template (just frontmatter)
-pnpm new --category=simple --title="Your Prompt Title" --blank
-```
+### Categories
 
-Categories:
 - `simple` - Quick prompts (< 100 words)
 - `complex` - Multi-section prompts for GPTs/Gems
 - `rules` - Agent configs for Cursor/coding tools
 
-### Create Manually
+### Create Manually (Skip Drafts)
 
 1. Add `.mdx` file to `/prompts/{category}/`
 2. Use kebab-case: `blog-outline-generator.mdx`

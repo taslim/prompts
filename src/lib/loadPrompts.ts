@@ -11,7 +11,8 @@ interface MDXContentModule {
 }
 
 // Import MDX files with content extraction via Vite plugin
-const modules = import.meta.glob<MDXContentModule>('/prompts/**/*.mdx', {
+// Excludes drafts folder for work-in-progress prompts
+const modules = import.meta.glob<MDXContentModule>('/prompts/{simple,complex,rules}/**/*.mdx', {
   eager: true,
   query: '?content',
 })

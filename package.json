@@ -13,7 +13,8 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,css,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,css,mdx}\" --cache",
     "typecheck": "tsc --noEmit",
-    "new": "tsx new-prompt.ts"
+    "new": "tsx new-prompt.ts",
+    "publish:prompts": "tsx publish-drafts.ts"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
