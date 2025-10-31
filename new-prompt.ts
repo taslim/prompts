@@ -49,7 +49,7 @@ if (isInteractive) {
       type: 'confirm',
       name: 'useTemplate',
       message: 'Use category template?',
-      initial: true,
+      initial: false,
     },
   ])
 
