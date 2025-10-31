@@ -147,7 +147,7 @@ export const PromptLibrary = () => {
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white py-4 dark:border-gray-800 dark:bg-gray-950">
         <div className="mx-auto max-w-6xl px-4">
-          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-center text-sm text-gray-600 dark:text-gray-400 sm:justify-between">
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-center text-sm text-gray-600 sm:justify-between dark:text-gray-400">
             <p>
               Curated by{' '}
               <a
