@@ -23,9 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# temp files
-docs/
-
 # Draft prompts (work in progress, but keep the README)
 prompts/drafts/*
 !prompts/drafts/README.md
