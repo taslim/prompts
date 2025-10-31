@@ -31,7 +31,7 @@ export const PromptCard = ({ prompt, isExpanded, onToggle, copiedId, onCopy }: P
 
   return (
     <div
-      className={`relative cursor-pointer rounded-lg border border-gray-200 bg-white p-6 transition-colors hover:border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 ${!isExpanded ? 'h-[140px]' : ''}`}
+      className={`relative cursor-pointer rounded-lg border border-gray-200 bg-white p-6 transition-colors hover:border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 ${!isExpanded ? 'overflow-hidden sm:h-[140px]' : ''}`}
       onClick={onToggle}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -59,7 +59,7 @@ export const PromptCard = ({ prompt, isExpanded, onToggle, copiedId, onCopy }: P
         </span>
       </div>
 
-      <div className="mb-3 pr-16">
+      <div className="mb-3 pr-20 sm:pr-24">
         <h3 className="mb-1 text-xl font-semibold text-gray-900 dark:text-gray-100">
           {prompt.title}
         </h3>

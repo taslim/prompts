@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Fuse from 'fuse.js'
+import { Github, ExternalLink } from 'lucide-react'
 import { SearchBar } from './SearchBar'
 import { CategoryFilter } from './CategoryFilter'
 import { PromptCard } from './PromptCard'
@@ -104,12 +105,12 @@ export const PromptLibrary = () => {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="mx-auto max-w-6xl px-4 py-12">
+    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-gray-900">
+      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-12">
         {/* Header */}
         <div className="mb-8">
           <h1 className="mb-2 text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-            Prompt Library
+            Prompts Library
           </h1>
           <p className="font-normal text-gray-600 dark:text-gray-400">
             My collection of reusable AI prompts and agent rules
@@ -142,6 +143,37 @@ export const PromptLibrary = () => {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200 bg-white py-4 dark:border-gray-800 dark:bg-gray-950">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-center text-sm text-gray-600 dark:text-gray-400 sm:justify-between">
+            <p>
+              Curated by{' '}
+              <a
+                href="https://taslim.xyz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 font-medium text-gray-900 underline transition-colors hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-300"
+              >
+                Taslim Okunola
+                <ExternalLink size={14} />
+              </a>
+            </p>
+            <span className="text-gray-400 dark:text-gray-600">·</span>
+            <a
+              href="https://github.com/taslim/prompts"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 transition-colors hover:text-gray-900 dark:hover:text-gray-100"
+              aria-label="View source on GitHub"
+            >
+              <Github size={20} />
+              <span className="font-medium">Open Source</span>
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
