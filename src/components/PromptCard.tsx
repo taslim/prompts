@@ -1,4 +1,5 @@
 import { Copy, Check } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
 import type { Prompt } from '../lib/types'
 
 interface PromptCardProps {
@@ -62,16 +63,34 @@ export const PromptCard = ({ prompt, isExpanded, onToggle, copiedId, onCopy }: P
         <h3 className="mb-1 text-xl font-semibold text-gray-900 dark:text-gray-100">
           {prompt.title}
         </h3>
-        <p
+        <div
           className={`text-sm text-gray-500 dark:text-gray-400 ${!isExpanded ? 'line-clamp-3' : ''}`}
         >
-          {prompt.description}
-        </p>
+          <ReactMarkdown
+            components={{
+              a: ({ node, ...props }) => (
+                <a
+                  {...props}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline transition-colors hover:text-gray-700 dark:hover:text-gray-300"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              ),
+              p: ({ node, ...props }) => <span {...props} />,
+            }}
+          >
+            {prompt.description}
+          </ReactMarkdown>
+        </div>
       </div>
 
       {isExpanded && (
         <>
-          <div className="mt-4 rounded border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900">
+          <div
+            className="mt-4 cursor-text rounded border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900"
+            onClick={(e) => e.stopPropagation()}
+          >
             <pre className="font-mono text-sm whitespace-pre-wrap text-gray-800 dark:text-gray-200">
               {prompt.content}
             </pre>
