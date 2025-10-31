@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+@layer base {
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --border: #e5e7eb;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #1a1a1a;
+      --text-primary: #e5e5e5;
+      --text-secondary: #a3a3a3;
+      --border: #2a2a2a;
+    }
+  }
+
+  body {
+    font-family:
+      'DM Sans',
+      system-ui,
+      -apple-system,
+      sans-serif;
+  }
+}
+
+@layer components {
+  .prompt-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .prompt-grid {
+      grid-template-columns: repeat(2, 1fr);
+      align-items: start;
+    }
+  }
+}
