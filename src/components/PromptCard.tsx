@@ -68,7 +68,7 @@ export const PromptCard = ({ prompt, isExpanded, onToggle, copiedId, onCopy }: P
         >
           <ReactMarkdown
             components={{
-              a: ({ node, ...props }) => (
+              a: ({ ...props }) => (
                 <a
                   {...props}
                   target="_blank"
@@ -77,7 +77,7 @@ export const PromptCard = ({ prompt, isExpanded, onToggle, copiedId, onCopy }: P
                   onClick={(e) => e.stopPropagation()}
                 />
               ),
-              p: ({ node, ...props }) => <span {...props} />,
+              p: ({ ...props }) => <span {...props} />,
             }}
           >
             {prompt.description}

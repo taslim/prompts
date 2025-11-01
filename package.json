@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "pnpm format:write && tsc && vite build",
+    "build": "pnpm format:write && tsc && pnpm check && vite build",
     "preview": "vite preview",
     "check": "pnpm lint && pnpm typecheck",
     "lint": "eslint .",

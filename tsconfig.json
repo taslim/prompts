@@ -16,6 +16,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "new-prompt.ts"],
+  "include": ["src", "new-prompt.ts", "publish-drafts.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
