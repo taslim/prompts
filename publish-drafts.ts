@@ -15,6 +15,8 @@ interface DraftFrontmatter {
   category?: Category
   status?: 'draft' | 'ready'
   tags?: string[]
+  authors?: string[]
+  source?: string
 }
 
 const draftsDir = path.join(__dirname, 'prompts', 'drafts')
@@ -64,11 +66,23 @@ let errors = 0
 for (const draft of readyDrafts) {
   const { filename, frontmatter } = draft
 
-  // Validate category
+  // Validate required fields
   if (!frontmatter.category || !['simple', 'complex', 'rules'].includes(frontmatter.category)) {
     console.error(
       `❌ ${filename}: Invalid or missing category "${frontmatter.category}". Skipping.`
     )
+    errors++
+    continue
+  }
+
+  if (!frontmatter.authors || frontmatter.authors.length === 0) {
+    console.error(`❌ ${filename}: Missing required field "authors". Skipping.`)
+    errors++
+    continue
+  }
+
+  if (!frontmatter.description) {
+    console.error(`❌ ${filename}: Missing required field "description". Skipping.`)
     errors++
     continue
   }

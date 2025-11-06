@@ -7,4 +7,10 @@ export interface Prompt {
   category: Category
   tags: string[]
   content: string
+  authors: string[]
+  authorSlugs: string[]
+  source?: {
+    text: string
+    href: string
+  }
 }

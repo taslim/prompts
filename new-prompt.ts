@@ -114,6 +114,8 @@ description: ""
 category: "${category}"
 status: "draft"
 tags: []
+authors: []
+source: ""
 ---
 
 
@@ -126,7 +128,9 @@ title: "${title}"
 description: "Describe when and how you use this prompt"
 category: "${category}"
 status: "draft"
-tags: ["tag1", "tag2"]
+tags: []
+authors: []
+source: ""
 ---
 
 Your prompt content here...
@@ -138,7 +142,9 @@ title: "${title}"
 description: "Describe this GPT/Gem and what it helps you accomplish"
 category: "${category}"
 status: "draft"
-tags: ["tag1", "tag2"]
+tags: []
+authors: []
+source: ""
 ---
 
 You are [role description].
@@ -162,7 +168,9 @@ title: "${title}"
 description: "Describe what project type or tool this is for"
 category: "${category}"
 status: "draft"
-tags: ["tag1", "tag2"]
+tags: []
+authors: []
+source: ""
 ---
 
 # ${title}
@@ -195,7 +203,8 @@ if (useBlank) {
 }
 console.log(`\nNext steps:`)
 console.log(`1. Edit the file and add your prompt content`)
-console.log(`2. Update tags and description`)
-console.log(`3. When ready, change status to "ready" in frontmatter`)
-console.log(`4. Run 'pnpm publish:prompts' to publish all ready drafts`)
-console.log(`5. Restart dev server to see published prompts in the UI\n`)
+console.log(`2. Update required fields: description, authors`)
+console.log(`3. Optional: Add tags, source link [Text](url)`)
+console.log(`4. When ready, change status to "ready" in frontmatter`)
+console.log(`5. Run 'pnpm publish:prompts' to publish all ready drafts`)
+console.log(`6. Restart dev server to see published prompts in the UI\n`)

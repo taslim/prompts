@@ -44,13 +44,19 @@ Creates draft with `status: "draft"` in frontmatter.
 
 ```mdx
 ---
+---
 title: "Your Title"
 description: "When/how you use this"
-tags: ["tag1", "tag2"]
+tags: [tag1, tag2]
+authors: [Author1, Author2]
+source: "[Optional Link Text](https://example.com)"
 ---
 
 Your prompt content...
 ```
+
+Required: `title`, `description`, `authors`  
+*Optional: `tags`, `source` (must be `[Text](url)` format)
 
 4. Restart dev server
 

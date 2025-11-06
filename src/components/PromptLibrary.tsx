@@ -1,12 +1,13 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Fuse from 'fuse.js'
-import { Github, ExternalLink } from 'lucide-react'
+import { Github, ExternalLink, X } from 'lucide-react'
 import { SearchBar } from './SearchBar'
 import { CategoryFilter } from './CategoryFilter'
 import { PromptCard } from './PromptCard'
 import { prompts } from '../lib/loadPrompts'
 import { searchConfig } from '../lib/searchConfig'
+import { slugifyAuthor } from '../lib/slugifyAuthor'
 import type { Prompt, Category } from '../lib/types'
 
 export const PromptLibrary = () => {
@@ -27,6 +28,35 @@ export const PromptLibrary = () => {
   // Derived from URL
   const searchQuery = searchParams.get('q') ?? ''
   const selectedCategory = (searchParams.get('category') ?? 'all') as 'all' | Category
+  const rawAuthor = searchParams.get('author')
+  const selectedAuthorSlug = rawAuthor ? slugifyAuthor(rawAuthor) : null
+
+  // Find the display name for the selected author
+  const selectedAuthorDisplay = useMemo(() => {
+    if (!selectedAuthorSlug) return null
+
+    for (const prompt of prompts) {
+      const index = prompt.authorSlugs.indexOf(selectedAuthorSlug)
+      if (index !== -1) {
+        return prompt.authors[index]
+      }
+    }
+    return null
+  }, [selectedAuthorSlug])
+
+  // Normalize author URL param to canonical slug if needed
+  useEffect(() => {
+    if (rawAuthor && selectedAuthorSlug && rawAuthor !== selectedAuthorSlug) {
+      setSearchParams(
+        (prev) => {
+          const newParams = new URLSearchParams(prev)
+          newParams.set('author', selectedAuthorSlug)
+          return newParams
+        },
+        { replace: true }
+      )
+    }
+  }, [rawAuthor, selectedAuthorSlug, setSearchParams])
 
   // Filter and search prompts
   const filteredPrompts = useMemo(() => {
@@ -37,6 +67,11 @@ export const PromptLibrary = () => {
       results = results.filter((prompt) => prompt.category === selectedCategory)
     }
 
+    // Apply author filter
+    if (selectedAuthorSlug) {
+      results = results.filter((prompt) => prompt.authorSlugs.includes(selectedAuthorSlug))
+    }
+
     // Apply search query on filtered results
     if (searchQuery.trim()) {
       const categoryFuse = new Fuse(results, searchConfig)
@@ -44,7 +79,7 @@ export const PromptLibrary = () => {
     }
 
     return results
-  }, [searchQuery, selectedCategory, randomizedPrompts])
+  }, [searchQuery, selectedCategory, selectedAuthorSlug, randomizedPrompts])
 
   // Update URL when search changes
   const updateSearch = (query: string) => {
@@ -67,6 +102,24 @@ export const PromptLibrary = () => {
         newParams.delete('category')
       } else {
         newParams.set('category', category)
+      }
+      return newParams
+    })
+  }
+
+  // Update URL when author changes (toggle off if same author clicked)
+  const handleAuthorClick = (slug: string | null) => {
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev)
+      const currentAuthor = newParams.get('author')
+
+      if (slug && currentAuthor === slug) {
+        // Clicking the same author clears the filter
+        newParams.delete('author')
+      } else if (slug) {
+        newParams.set('author', slug)
+      } else {
+        newParams.delete('author')
       }
       return newParams
     })
@@ -123,6 +176,21 @@ export const PromptLibrary = () => {
         {/* Category Filters */}
         <CategoryFilter selectedCategory={selectedCategory} onCategoryChange={updateCategory} />
 
+        {/* Active Author Filter Badge */}
+        {selectedAuthorDisplay && (
+          <div className="mb-6 flex items-center gap-2">
+            <span className="text-sm text-gray-600 dark:text-gray-400">Filtered by author:</span>
+            <button
+              onClick={() => handleAuthorClick(null)}
+              className="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 transition-colors hover:border-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-600"
+              aria-label={`Clear filter for author ${selectedAuthorDisplay}`}
+            >
+              {selectedAuthorDisplay}
+              <X size={14} />
+            </button>
+          </div>
+        )}
+
         {/* Prompts Grid */}
         <div className="prompt-grid">
           {filteredPrompts.map((prompt) => (
@@ -133,6 +201,7 @@ export const PromptLibrary = () => {
               onToggle={() => setExpandedId(expandedId === prompt.id ? null : prompt.id)}
               copiedId={copiedId}
               onCopy={handleCopy}
+              onAuthorClick={handleAuthorClick}
             />
           ))}
         </div>

@@ -41,10 +41,50 @@ export function mdxContent(): Plugin {
         const fileContents = readFileSync(absolutePath, 'utf-8')
         const { data, content } = matter(fileContents)
 
-        if (!data.title || data.description === undefined) {
-          this.warn(
-            `MDX file ${absolutePath} is missing required frontmatter fields (title, description)`
+        // Validate required fields
+        if (!data.title || typeof data.title !== 'string') {
+          this.error(`MDX file ${absolutePath} is missing required field: title (must be a string)`)
+          return null
+        }
+
+        if (!data.description || typeof data.description !== 'string') {
+          this.error(
+            `MDX file ${absolutePath} is missing required field: description (must be a non-empty string)`
           )
+          return null
+        }
+
+        if (!data.authors || !Array.isArray(data.authors) || data.authors.length === 0) {
+          this.error(
+            `MDX file ${absolutePath} is missing required field: authors (must be a non-empty array of strings)`
+          )
+          return null
+        }
+
+        // Validate authors array
+        for (const author of data.authors) {
+          if (typeof author !== 'string' || author.trim() === '') {
+            this.error(
+              `MDX file ${absolutePath} has invalid authors array: all authors must be non-empty strings`
+            )
+            return null
+          }
+        }
+
+        // Validate source format if present
+        if (data.source !== undefined) {
+          if (typeof data.source !== 'string') {
+            this.warn(
+              `MDX file ${absolutePath} has invalid source: must be a string in format [Text](url)`
+            )
+          } else {
+            const markdownLinkPattern = /^\[(.+?)\]\((.+?)\)$/
+            if (!markdownLinkPattern.test(data.source)) {
+              this.warn(
+                `MDX file ${absolutePath} has invalid source format: expected [Text](url), got "${data.source}"`
+              )
+            }
+          }
         }
 
         return `export const frontmatter = ${JSON.stringify(data)}\nexport const content = ${JSON.stringify(content.trim())}`
