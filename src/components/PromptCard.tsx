@@ -46,6 +46,7 @@ export const PromptCard = ({
 
   return (
     <div
+      data-prompt-id={prompt.id}
       className={`relative cursor-pointer rounded-lg border border-gray-200 bg-white p-6 transition-colors hover:border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 ${!isExpanded ? 'overflow-hidden sm:h-[160px]' : ''}`}
       onClick={onToggle}
       onKeyDown={(e) => {

@@ -4,6 +4,7 @@ import { slugifyAuthor } from './slugifyAuthor'
 // Type definition for MDX content modules (parsed by Vite plugin using gray-matter)
 interface MDXContentModule {
   frontmatter: {
+    id: number
     title: string
     description: string
     tags: string[]
@@ -62,8 +63,6 @@ export const prompts: Prompt[] = Object.entries(modules).map(([path, module]) =>
     throw new Error(`Invalid category: ${category} in path: ${path}`)
   }
 
-  const filename = pathParts[pathParts.length - 1]?.replace('.mdx', '') || ''
-
   const authors = module.frontmatter.authors || []
   const authorSlugs = authors.map(slugifyAuthor)
   const source = module.frontmatter.source
@@ -71,7 +70,7 @@ export const prompts: Prompt[] = Object.entries(modules).map(([path, module]) =>
     : undefined
 
   return {
-    id: filename,
+    id: String(module.frontmatter.id),
     category,
     title: module.frontmatter.title,
     description: module.frontmatter.description,

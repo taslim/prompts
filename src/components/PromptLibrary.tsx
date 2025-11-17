@@ -30,6 +30,7 @@ export const PromptLibrary = () => {
   const selectedCategory = (searchParams.get('category') ?? 'all') as 'all' | Category
   const rawAuthor = searchParams.get('author')
   const selectedAuthorSlug = rawAuthor ? slugifyAuthor(rawAuthor) : null
+  const promptIdFromUrl = searchParams.get('id')
 
   // Find the display name for the selected author
   const selectedAuthorDisplay = useMemo(() => {
@@ -57,6 +58,20 @@ export const PromptLibrary = () => {
       )
     }
   }, [rawAuthor, selectedAuthorSlug, setSearchParams])
+
+  // Handle deeplinking: auto-expand prompt when id param is present in URL
+  useEffect(() => {
+    if (promptIdFromUrl && expandedId !== promptIdFromUrl) {
+      setExpandedId(promptIdFromUrl)
+      // Scroll to the prompt after a short delay to ensure it's rendered
+      setTimeout(() => {
+        const promptElement = document.querySelector(`[data-prompt-id="${promptIdFromUrl}"]`)
+        if (promptElement) {
+          promptElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+      }, 100)
+    }
+  }, [promptIdFromUrl, expandedId])
 
   // Filter and search prompts
   const filteredPrompts = useMemo(() => {
