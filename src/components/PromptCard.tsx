@@ -1,5 +1,6 @@
 import { Copy, Check } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import { useSearchParams } from 'react-router-dom'
 import type { Prompt } from '../lib/types'
 import { slugifyAuthor } from '../lib/slugifyAuthor'
 
@@ -20,6 +21,8 @@ export const PromptCard = ({
   onCopy,
   onAuthorClick,
 }: PromptCardProps) => {
+  const [, setSearchParams] = useSearchParams()
+
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation()
     onCopy(prompt.id, prompt.content)
@@ -29,6 +32,20 @@ export const PromptCard = ({
     e.stopPropagation()
     const slug = slugifyAuthor(authorName)
     onAuthorClick(slug)
+  }
+
+  const handleTitleClick = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation()
+    // Set the ID in the URL to create a deeplink
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev)
+      newParams.set('id', prompt.id)
+      // Clear other filters when setting ID
+      newParams.delete('q')
+      newParams.delete('category')
+      newParams.delete('author')
+      return newParams
+    })
   }
 
   const getCategoryColor = () => {
@@ -46,10 +63,12 @@ export const PromptCard = ({
 
   return (
     <div
+      data-prompt-id={prompt.id}
       className={`relative cursor-pointer rounded-lg border border-gray-200 bg-white p-6 transition-colors hover:border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 ${!isExpanded ? 'overflow-hidden sm:h-[160px]' : ''}`}
       onClick={onToggle}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        // Only toggle if the event target is the card itself, not a child interactive element
+        if ((e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget) {
           e.preventDefault()
           onToggle()
         }
@@ -75,7 +94,18 @@ export const PromptCard = ({
       </div>
 
       <div className="mb-3 pr-20 sm:pr-24">
-        <h3 className="mb-1 text-xl font-semibold text-gray-900 dark:text-gray-100">
+        <h3
+          className="mb-1 cursor-pointer text-xl font-semibold text-gray-900 hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-300"
+          onClick={handleTitleClick}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              handleTitleClick(e)
+            }
+          }}
+          role="button"
+          tabIndex={0}
+        >
           {prompt.title}
         </h3>
         <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">

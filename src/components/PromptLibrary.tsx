@@ -24,12 +24,14 @@ export const PromptLibrary = () => {
     return shuffled
   })
   const copyTimeoutRef = useRef<number | null>(null)
+  const previousPromptIdRef = useRef<string | null>(null)
 
   // Derived from URL
   const searchQuery = searchParams.get('q') ?? ''
   const selectedCategory = (searchParams.get('category') ?? 'all') as 'all' | Category
   const rawAuthor = searchParams.get('author')
   const selectedAuthorSlug = rawAuthor ? slugifyAuthor(rawAuthor) : null
+  const promptIdFromUrl = searchParams.get('id')
 
   // Find the display name for the selected author
   const selectedAuthorDisplay = useMemo(() => {
@@ -58,9 +60,38 @@ export const PromptLibrary = () => {
     }
   }, [rawAuthor, selectedAuthorSlug, setSearchParams])
 
+  // Handle deeplinking: auto-expand prompt when id param is present in URL
+  useEffect(() => {
+    const previousPromptId = previousPromptIdRef.current
+
+    if (promptIdFromUrl && expandedId !== promptIdFromUrl) {
+      // Expand the prompt when ID is set
+      setExpandedId(promptIdFromUrl)
+      // Scroll to the prompt after a short delay to ensure it's rendered
+      setTimeout(() => {
+        const promptElement = document.querySelector(`[data-prompt-id="${promptIdFromUrl}"]`)
+        if (promptElement) {
+          promptElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+      }, 100)
+    } else if (!promptIdFromUrl && previousPromptId) {
+      // Collapse prompt only when ID is cleared (transitioned from having ID to not having one)
+      setExpandedId(null)
+    }
+
+    // Update the ref for next render
+    previousPromptIdRef.current = promptIdFromUrl
+  }, [promptIdFromUrl, expandedId])
+
   // Filter and search prompts
   const filteredPrompts = useMemo(() => {
     let results: Prompt[] = randomizedPrompts
+
+    // If ID is specified, show only that prompt
+    if (promptIdFromUrl) {
+      const promptById = results.find((prompt) => prompt.id === promptIdFromUrl)
+      return promptById ? [promptById] : []
+    }
 
     // Apply category filter first
     if (selectedCategory !== 'all') {
@@ -79,12 +110,14 @@ export const PromptLibrary = () => {
     }
 
     return results
-  }, [searchQuery, selectedCategory, selectedAuthorSlug, randomizedPrompts])
+  }, [searchQuery, selectedCategory, selectedAuthorSlug, randomizedPrompts, promptIdFromUrl])
 
   // Update URL when search changes
   const updateSearch = (query: string) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev)
+      // Clear ID when search is used
+      newParams.delete('id')
       if (query.trim()) {
         newParams.set('q', query)
       } else {
@@ -98,6 +131,8 @@ export const PromptLibrary = () => {
   const updateCategory = (category: 'all' | Category) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev)
+      // Clear ID when category filter is used
+      newParams.delete('id')
       if (category === 'all') {
         newParams.delete('category')
       } else {
@@ -111,6 +146,8 @@ export const PromptLibrary = () => {
   const handleAuthorClick = (slug: string | null) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev)
+      // Clear ID when author filter is used
+      newParams.delete('id')
       const currentAuthor = newParams.get('author')
 
       if (slug && currentAuthor === slug) {

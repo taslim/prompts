@@ -10,6 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 type Category = 'simple' | 'complex' | 'rules'
 
 interface DraftFrontmatter {
+  id?: number
   title: string
   description?: string
   category?: Category
@@ -20,6 +21,32 @@ interface DraftFrontmatter {
 }
 
 const draftsDir = path.join(__dirname, 'prompts', 'drafts')
+const promptsDir = path.join(__dirname, 'prompts')
+
+// Function to get the maximum existing prompt ID
+function getMaxPromptId(): number {
+  let maxId = 0
+  const categories: Category[] = ['simple', 'complex', 'rules']
+
+  for (const category of categories) {
+    const categoryDir = path.join(promptsDir, category)
+    if (!fs.existsSync(categoryDir)) continue
+
+    const files = fs.readdirSync(categoryDir).filter((file) => file.endsWith('.mdx'))
+
+    for (const file of files) {
+      const filepath = path.join(categoryDir, file)
+      const fileContents = fs.readFileSync(filepath, 'utf-8')
+      const { data } = matter(fileContents)
+
+      if (data.id && typeof data.id === 'number' && data.id > maxId) {
+        maxId = data.id
+      }
+    }
+  }
+
+  return maxId
+}
 
 // Check if drafts directory exists
 if (!fs.existsSync(draftsDir)) {
@@ -59,6 +86,9 @@ if (readyDrafts.length === 0) {
 
 // Publish each ready draft
 console.log(`\nFound ${readyDrafts.length} draft(s) ready to publish:\n`)
+
+// Get the current max ID to assign new IDs
+let nextId = getMaxPromptId() + 1
 
 let published = 0
 let errors = 0
@@ -105,6 +135,13 @@ for (const draft of readyDrafts) {
 
     // Save category before deleting it (for console output)
     const category = frontmatter.category
+
+    // Assign a new ID if it doesn't exist
+    if (!parsed.data.id) {
+      parsed.data.id = nextId
+      console.log(`   Assigned ID ${nextId} to ${filename}`)
+      nextId++
+    }
 
     // Remove status field (no longer needed in published prompts)
     delete parsed.data.status
