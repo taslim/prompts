@@ -70,6 +70,9 @@ export const PromptLibrary = () => {
           promptElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
         }
       }, 100)
+    } else if (!promptIdFromUrl && expandedId) {
+      // Collapse prompt when ID is cleared
+      setExpandedId(null)
     }
   }, [promptIdFromUrl, expandedId])
 
