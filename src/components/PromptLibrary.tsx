@@ -77,6 +77,12 @@ export const PromptLibrary = () => {
   const filteredPrompts = useMemo(() => {
     let results: Prompt[] = randomizedPrompts
 
+    // If ID is specified, show only that prompt
+    if (promptIdFromUrl) {
+      const promptById = results.find((prompt) => prompt.id === promptIdFromUrl)
+      return promptById ? [promptById] : []
+    }
+
     // Apply category filter first
     if (selectedCategory !== 'all') {
       results = results.filter((prompt) => prompt.category === selectedCategory)
@@ -94,7 +100,7 @@ export const PromptLibrary = () => {
     }
 
     return results
-  }, [searchQuery, selectedCategory, selectedAuthorSlug, randomizedPrompts])
+  }, [searchQuery, selectedCategory, selectedAuthorSlug, randomizedPrompts, promptIdFromUrl])
 
   // Update URL when search changes
   const updateSearch = (query: string) => {
