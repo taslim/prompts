@@ -197,16 +197,14 @@ export const PromptLibrary = () => {
           </p>
         </div>
 
-        {/* Search - Hidden when ID is present */}
-        {!promptIdFromUrl && <SearchBar value={searchQuery} onChange={updateSearch} />}
+        {/* Search */}
+        <SearchBar value={searchQuery} onChange={updateSearch} />
 
-        {/* Category Filters - Hidden when ID is present */}
-        {!promptIdFromUrl && (
-          <CategoryFilter selectedCategory={selectedCategory} onCategoryChange={updateCategory} />
-        )}
+        {/* Category Filters */}
+        <CategoryFilter selectedCategory={selectedCategory} onCategoryChange={updateCategory} />
 
-        {/* Active Author Filter Badge - Hidden when ID is present */}
-        {!promptIdFromUrl && selectedAuthorDisplay && (
+        {/* Active Author Filter Badge */}
+        {selectedAuthorDisplay && (
           <div className="mb-6 flex items-center gap-2">
             <span className="text-sm text-gray-600 dark:text-gray-400">Filtered by author:</span>
             <button
