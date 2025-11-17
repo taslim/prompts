@@ -24,6 +24,7 @@ export const PromptLibrary = () => {
     return shuffled
   })
   const copyTimeoutRef = useRef<number | null>(null)
+  const previousPromptIdRef = useRef<string | null>(null)
 
   // Derived from URL
   const searchQuery = searchParams.get('q') ?? ''
@@ -61,7 +62,10 @@ export const PromptLibrary = () => {
 
   // Handle deeplinking: auto-expand prompt when id param is present in URL
   useEffect(() => {
+    const previousPromptId = previousPromptIdRef.current
+
     if (promptIdFromUrl && expandedId !== promptIdFromUrl) {
+      // Expand the prompt when ID is set
       setExpandedId(promptIdFromUrl)
       // Scroll to the prompt after a short delay to ensure it's rendered
       setTimeout(() => {
@@ -70,10 +74,13 @@ export const PromptLibrary = () => {
           promptElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
         }
       }, 100)
-    } else if (!promptIdFromUrl && expandedId) {
-      // Collapse prompt when ID is cleared
+    } else if (!promptIdFromUrl && previousPromptId) {
+      // Collapse prompt only when ID is cleared (transitioned from having ID to not having one)
       setExpandedId(null)
     }
+
+    // Update the ref for next render
+    previousPromptIdRef.current = promptIdFromUrl
   }, [promptIdFromUrl, expandedId])
 
   // Filter and search prompts
