@@ -106,6 +106,8 @@ export const PromptLibrary = () => {
   const updateSearch = (query: string) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev)
+      // Clear ID when search is used
+      newParams.delete('id')
       if (query.trim()) {
         newParams.set('q', query)
       } else {
@@ -119,6 +121,8 @@ export const PromptLibrary = () => {
   const updateCategory = (category: 'all' | Category) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev)
+      // Clear ID when category filter is used
+      newParams.delete('id')
       if (category === 'all') {
         newParams.delete('category')
       } else {
@@ -132,6 +136,8 @@ export const PromptLibrary = () => {
   const handleAuthorClick = (slug: string | null) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev)
+      // Clear ID when author filter is used
+      newParams.delete('id')
       const currentAuthor = newParams.get('author')
 
       if (slug && currentAuthor === slug) {
@@ -191,14 +197,16 @@ export const PromptLibrary = () => {
           </p>
         </div>
 
-        {/* Search */}
-        <SearchBar value={searchQuery} onChange={updateSearch} />
+        {/* Search - Hidden when ID is present */}
+        {!promptIdFromUrl && <SearchBar value={searchQuery} onChange={updateSearch} />}
 
-        {/* Category Filters */}
-        <CategoryFilter selectedCategory={selectedCategory} onCategoryChange={updateCategory} />
+        {/* Category Filters - Hidden when ID is present */}
+        {!promptIdFromUrl && (
+          <CategoryFilter selectedCategory={selectedCategory} onCategoryChange={updateCategory} />
+        )}
 
-        {/* Active Author Filter Badge */}
-        {selectedAuthorDisplay && (
+        {/* Active Author Filter Badge - Hidden when ID is present */}
+        {!promptIdFromUrl && selectedAuthorDisplay && (
           <div className="mb-6 flex items-center gap-2">
             <span className="text-sm text-gray-600 dark:text-gray-400">Filtered by author:</span>
             <button
