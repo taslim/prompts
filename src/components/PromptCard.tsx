@@ -1,5 +1,6 @@
 import { Copy, Check } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import { useSearchParams } from 'react-router-dom'
 import type { Prompt } from '../lib/types'
 import { slugifyAuthor } from '../lib/slugifyAuthor'
 
@@ -20,6 +21,8 @@ export const PromptCard = ({
   onCopy,
   onAuthorClick,
 }: PromptCardProps) => {
+  const [, setSearchParams] = useSearchParams()
+
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation()
     onCopy(prompt.id, prompt.content)
@@ -29,6 +32,20 @@ export const PromptCard = ({
     e.stopPropagation()
     const slug = slugifyAuthor(authorName)
     onAuthorClick(slug)
+  }
+
+  const handleTitleClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    // Set the ID in the URL to create a deeplink
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev)
+      newParams.set('id', prompt.id)
+      // Clear other filters when setting ID
+      newParams.delete('q')
+      newParams.delete('category')
+      newParams.delete('author')
+      return newParams
+    })
   }
 
   const getCategoryColor = () => {
@@ -76,7 +93,10 @@ export const PromptCard = ({
       </div>
 
       <div className="mb-3 pr-20 sm:pr-24">
-        <h3 className="mb-1 text-xl font-semibold text-gray-900 dark:text-gray-100">
+        <h3
+          className="mb-1 cursor-pointer text-xl font-semibold text-gray-900 hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-300"
+          onClick={handleTitleClick}
+        >
           {prompt.title}
         </h3>
         <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
