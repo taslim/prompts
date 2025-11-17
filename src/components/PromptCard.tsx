@@ -34,7 +34,7 @@ export const PromptCard = ({
     onAuthorClick(slug)
   }
 
-  const handleTitleClick = (e: React.MouseEvent) => {
+  const handleTitleClick = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation()
     // Set the ID in the URL to create a deeplink
     setSearchParams((prev) => {
@@ -46,23 +46,6 @@ export const PromptCard = ({
       newParams.delete('author')
       return newParams
     })
-  }
-
-  const handleTitleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      e.stopPropagation()
-      // Set the ID in the URL to create a deeplink
-      setSearchParams((prev) => {
-        const newParams = new URLSearchParams(prev)
-        newParams.set('id', prompt.id)
-        // Clear other filters when setting ID
-        newParams.delete('q')
-        newParams.delete('category')
-        newParams.delete('author')
-        return newParams
-      })
-    }
   }
 
   const getCategoryColor = () => {
@@ -113,10 +96,14 @@ export const PromptCard = ({
         <h3
           className="mb-1 cursor-pointer text-xl font-semibold text-gray-900 hover:text-gray-700 dark:text-gray-100 dark:hover:text-gray-300"
           onClick={handleTitleClick}
-          onKeyDown={handleTitleKeyDown}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              handleTitleClick(e)
+            }
+          }}
           role="button"
           tabIndex={0}
-          aria-label={`View deeplink for ${prompt.title}`}
         >
           {prompt.title}
         </h3>
